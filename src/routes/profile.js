@@ -70,6 +70,9 @@ profileRouter.patch("/user/:userId", async (req, res) => {
 profileRouter.get("/profile/view", authMiddleware, async (req, res) => {
   try {
     const userDetails = req.user;
+    if (!userDetails) {
+      return res.status(404).json({ message: "User not found" });
+    }
     res.status(200).json({ message: "User profile", user: userDetails });
   } catch (error) {
     res
