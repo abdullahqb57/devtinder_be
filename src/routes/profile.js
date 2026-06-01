@@ -85,16 +85,16 @@ profileRouter.patch("/profile/edit", authMiddleware, async (req, res) => {
     const loggedInUser = req.user;
     const isValidFields = validateProfileData(req);
     if(!isValidFields) {
-        return res.status(400).json({ message: "Invalid profile fields" });
+        return res.status(400).json({ status: 400, message: "Invalid profile fields" });
     }
     for(let key in req.body) {
         loggedInUser[key] = req.body[key];
     }
     try {
         await loggedInUser.save()
-        res.status(200).json({ message: "Profile updated successfully", user: loggedInUser });
+        res.status(200).json({ status: 200, message: "Profile updated successfully", user: loggedInUser });
     } catch (error) {
-        res.status(500).json({ message: "Error updating profile", error: error.message });
+        res.status(500).json({ status: 500, message: "Error updating profile", error: error.message });
     }
 })
 
@@ -103,7 +103,7 @@ profileRouter.patch("/profile/password", authMiddleware, async (req, res) => {
     const loggedInUser = req.user;
    const isMatch = await loggedInUser.validatePassword(req.body.oldPassword);
    if(!isMatch) {
-    return res.status(400).json({ message: "Old password is incorrect" });
+    return res.status(400).json({ status: 400,  message: "Old password is incorrect" });
    } else {
     const hashedPassword = await bcrypt.hash(req.body.newPassword, 10);
     loggedInUser.password = hashedPassword;

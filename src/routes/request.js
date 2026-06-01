@@ -34,7 +34,7 @@ requestRouter.post("/request/review/:status/:requestId", authMiddleware, async (
         return res.status(400).json({ message: "Invalid status" });
     }
     try {
-        const connectionRequest = await ConnectionRequest.findById({
+        const connectionRequest = await ConnectionRequest.findOne({
             _id: requestId,
             toUserId: loggedInUser._id,
             status: 'interested'

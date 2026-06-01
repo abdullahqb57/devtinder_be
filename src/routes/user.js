@@ -8,13 +8,13 @@ userRouter.get("/user/requests", authMiddleware, async (req, res) => {
     const userDetails = req.user;
     try {
         const connectionRequests = await ConnectionRequest.find({ toUserId: userDetails._id, status: 'interested' })
-        .populate('fromUserId', 'firstName lastName email');
-        res.status(200).json({ message: "Connection requests fetched successfully", connectionRequests });
+        .populate('fromUserId', 'firstName lastName email about photoUrl gender age');
+        res.status(200).json({ status: 200, message: "Connection requests fetched successfully", connectionRequests });
     } catch (error) {
-        res.status(500).json({ message: "Error fetching connection requests", error: error.message });
+        res.status(500).json({ status: 500, message: "Error fetching connection requests", error: error.message });
     }   
 });
-
+// TODO response not getting properly
 userRouter.get("/user/connections", authMiddleware, async (req, res) => {
     const loggedInUser = req.user;
     try {
@@ -24,8 +24,8 @@ userRouter.get("/user/connections", authMiddleware, async (req, res) => {
                 { toUserId: loggedInUser._id, status: 'accepted' }
             ]
         })
-        .populate('fromUserId', 'firstName lastName email')
-        .populate('toUserId', 'firstName lastName email');
+        .populate('fromUserId', 'firstName lastName email about photoUrl gender age')
+        .populate('toUserId', 'firstName lastName email about photoUrl gender age');
         console.log("Connections", connections);
         const abc = connections.map(conn => {
             if(conn.fromUserId._id.toString() === loggedInUser._id.toString()) {
@@ -33,9 +33,9 @@ userRouter.get("/user/connections", authMiddleware, async (req, res) => {
             }
             return conn.fromUserId
         });
-        res.status(200).json({ message: "Connections fetched successfully", connections: abc });
+        res.status(200).json({ status: 200, message: "Connections fetched successfully", connections: abc });
     } catch (error) {
-        res.status(500).json({ message: "Error fetching connections", error: error.message });
+        res.status(500).json({ status: 500, message: "Error fetching connections", error: error.message });
     }
 });
 
@@ -69,10 +69,10 @@ userRouter.get("/feeds", authMiddleware, async (req, res) => {
                 { _id: { $nin: hiddenUserIds } },
                 { _id: { $ne: loggedInUser._id } },
             ]
-        }).select('firstName lastName email about photoUrl gender').skip(parseInt(skip)).limit(parseInt(limit));
-        res.status(200).json({ message: "Feed fetched successfully", connections: feedConnections });
+        }).select('firstName lastName email about photoUrl gender age').skip(parseInt(skip)).limit(parseInt(limit));
+        res.status(200).json({ status: 200, message: "Feed fetched successfully", connections: feedConnections });
     } catch (err) {
-        res.status(500).json({ message: "Error fetching feed", error: err.message });
+        res.status(500).json({ status: 500, message: "Error fetching feed", error: err.message });
     }
 });
 
