@@ -69,7 +69,7 @@ userRouter.get("/feeds", authMiddleware, async (req, res) => {
                 { _id: { $nin: hiddenUserIds } },
                 { _id: { $ne: loggedInUser._id } },
             ]
-        }).select('firstName lastName email').skip(parseInt(skip)).limit(parseInt(limit));
+        }).select('firstName lastName email about photoUrl gender').skip(parseInt(skip)).limit(parseInt(limit));
         res.status(200).json({ message: "Feed fetched successfully", connections: feedConnections });
     } catch (err) {
         res.status(500).json({ message: "Error fetching feed", error: err.message });
