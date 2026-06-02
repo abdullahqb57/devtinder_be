@@ -20,9 +20,9 @@ requestRouter.post("/request/send/:status/:toUserId", authMiddleware, async (req
         }
         const newReq = new ConnectionRequest({ fromUserId: fromUser._id, toUserId, status });
         await newReq.save();
-        res.status(201).json({ message: `${fromUser.firstName} is ${status} with ${toUserId}`, request: newReq });
+        res.status(201).json({status: 200, message: `${fromUser.firstName} is ${status} with ${toUserId}`, request: newReq });
     } catch (error) {
-        res.status(500).json({ message: "Error sending connection request", error: error.message });
+        res.status(500).json({ status: 500, message: "Error sending connection request", error: error.message });
     }
 });
 
@@ -31,7 +31,7 @@ requestRouter.post("/request/review/:status/:requestId", authMiddleware, async (
     const {requestId, status} = req.params;
     const allowedStatus = ['accepted', 'rejected', 'interested'];
     if(!allowedStatus.includes(status)) {
-        return res.status(400).json({ message: "Invalid status" });
+        return res.status(400).json({ status: 400, message: "Invalid status" });
     }
     try {
         const connectionRequest = await ConnectionRequest.findOne({
@@ -40,13 +40,13 @@ requestRouter.post("/request/review/:status/:requestId", authMiddleware, async (
             status: 'interested'
         });
         if(!connectionRequest) {
-            return res.status(404).json({ message: "Connection request not found or already reviewed" });
+            return res.status(404).json({ status: 404, message: "Connection request not found or already reviewed" });
         }
         connectionRequest.status = status;
         const data = await connectionRequest.save();
-        res.status(200).json({ message: `Connection request ${status}`, request: data });
+        res.status(200).json({ status: 200, message: `Connection request ${status}`, request: data });
     } catch (error) {
-        res.status(500).json({ message: "Error reviewing connection request", error: error.message });
+        res.status(500).json({ status: 500, message: "Error reviewing connection request", error: error.message });
     }
 });   
 
