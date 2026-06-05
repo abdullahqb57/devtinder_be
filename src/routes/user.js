@@ -26,7 +26,6 @@ userRouter.get("/user/connections", authMiddleware, async (req, res) => {
         })
         .populate('fromUserId', 'firstName lastName email about photoUrl gender age')
         .populate('toUserId', 'firstName lastName email about photoUrl gender age');
-        console.log("Connections", connections);
         const abc = connections.map(conn => {
             if(conn.fromUserId._id.toString() === loggedInUser._id.toString()) {
                 return conn.toUserId
@@ -62,8 +61,6 @@ userRouter.get("/feeds", authMiddleware, async (req, res) => {
             }
         });
         
-        console.log("Connections for feed", hiddenUserIds);
-
         const feedConnections = await User.find({
             $and: [
                 { _id: { $nin: hiddenUserIds } },

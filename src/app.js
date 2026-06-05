@@ -10,7 +10,8 @@ import authRouter from "./routes/auth.js";
 import profileRouter from "./routes/profile.js";
 import requestRouter from "./routes/request.js";
 import userRouter from "./routes/user.js";
-
+import http from "http";
+import initializeSocket from "./utils/socket.js";
 
 const app = express();
 
@@ -28,12 +29,17 @@ app.use("/", profileRouter);
 app.use("/", requestRouter);
 app.use("/", userRouter);
 
+const server = http.createServer(app);
+const io = initializeSocket(server);
+
+
+
 const PORT = process.env.PORT || 3000;
 
 connectDB()
   .then(() => {
     console.log("CONNECTED TO DB");
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
       console.log(`Listening on ${PORT}`);
     });
   })

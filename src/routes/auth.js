@@ -6,7 +6,6 @@ const authRouter = express.Router();
 
 authRouter.post("/login", async (req, res) => {
   const {email, password} = req.body;
-  console.log("Login request received with email:", email);
   try {
     if(!email || !password) {
       return res.status(400).json({ status: 400, message: "Email and password are required" });
