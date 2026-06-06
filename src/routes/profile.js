@@ -98,7 +98,6 @@ profileRouter.patch("/profile/edit", authMiddleware, async (req, res) => {
     }
 })
 
-//TODO: Implement password change functionality
 profileRouter.patch("/profile/password", authMiddleware, async (req, res) => {
     const loggedInUser = req.user;
    const isMatch = await loggedInUser.validatePassword(req.body.oldPassword);

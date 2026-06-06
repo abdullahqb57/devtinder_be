@@ -32,6 +32,38 @@ userRouter.get("/user/connections", authMiddleware, async (req, res) => {
             }
             return conn.fromUserId
         });
+        // const connectionslookup = await ConnectionRequest.aggregate([
+        //     {
+        //         $match: {
+        //             $or: [
+        //                 { fromUserId: loggedInUser._id, status: 'accepted' },
+        //                 { toUserId: loggedInUser._id, status: 'accepted' }
+        //             ]
+        //         }
+        //     },
+        //     {
+        //         $lookup: {
+        //             from: 'users',
+        //             localField: 'fromUserId',
+        //             foreignField: '_id',
+        //             as: 'fromUser'
+        //         }
+        //     },
+        //     {
+        //         $lookup: {
+        //             from: 'users',
+        //             localField: 'toUserId',
+        //             foreignField: '_id',
+        //             as: 'toUser'
+        //         }
+        //     },
+        //     {
+        //         $project: {
+        //             fromUser: { $arrayElemAt: ['$fromUser', 0] },
+        //             toUser: { $arrayElemAt: ['$toUser', 0] }
+        //         }
+        //     } 
+        // ]);
         res.status(200).json({ status: 200, message: "Connections fetched successfully", connections: abc });
     } catch (error) {
         res.status(500).json({ status: 500, message: "Error fetching connections", error: error.message });
