@@ -1,7 +1,8 @@
 import { Server } from "socket.io";
 import crypto from "crypto";
+import Chat from "../models/chat.js";
 
-const getSecretRoomId = (userId1, userId2) => {
+export const getSecretRoomId = (userId1, userId2) => {
     return crypto.createHash('sha256').update([userId1, userId2].sort().join('-')).digest('hex');
 }
 
@@ -21,8 +22,26 @@ const initializeSocket = (server) => {
             socket.join(roomId);
         });
 
-        socket.on("sendMessage", ({firstName, userId, targetId, message}) => {
+        socket.on("sendMessage", async ({firstName, userId, targetId, message}) => {
             const roomId = getSecretRoomId(userId, targetId);
+
+            const chatDoc = await Chat.findOne({
+                participantsId: roomId
+            });
+            if(!chatDoc) {
+                const newChat = new Chat({
+                    participantsId: roomId,
+                    messages: [`${firstName}: ${message}`]
+                });
+                const savedChat = await newChat.save();
+                console.log("New chat created with ID:", savedChat._id);
+            } else {
+                await Chat.findOneAndUpdate(
+                    { participantsId: roomId },
+                    { $push: { messages: `${firstName}: ${message}` } },
+                    { new: true }
+                );
+            }
             console.log(`Message from ${firstName} in room ${roomId}: ${message}`);
             io.to(roomId).emit("receiveMessage", { firstName, message });
         });
